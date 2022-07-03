@@ -14,17 +14,6 @@
       clients:
         - url: "https://localhost:3100/loki/api/v1/push"
 
-      scrape_configs:
-        - job_name: "journald"
-          journal:
-            path: "/var/log/journal"
-          relabel_configs:
-            # https://www.freedesktop.org/software/systemd/man/systemd.journal-fields.html
-            - source_labels: ['__journal__hostname']
-              target_label: "instance"
-            - source_labels: ['__journal__systemd_unit']
-              target_label: "unit"
-
     promtail_group: nobody
   roles:
     - ansible-promtail
