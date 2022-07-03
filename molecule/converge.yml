@@ -1,0 +1,19 @@
+- name: Install promtail
+  become: true
+  hosts: all
+  vars:
+    promtail_version: "2.5.0"
+    promtail_config:
+      server:
+        http_listen_port: 9380
+        grpc_listen_port: 0
+
+      positions:
+        filename: "{{ promtail_dir }}/positions.yml"
+
+      clients:
+        - url: "https://localhost:3100/loki/api/v1/push"
+
+    promtail_group: nobody
+  roles:
+    - ansible-promtail
