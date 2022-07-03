@@ -24,5 +24,7 @@
               target_label: "instance"
             - source_labels: ['__journal__systemd_unit']
               target_label: "unit"
+
+    promtail_group: nobody
   roles:
     - ansible-promtail

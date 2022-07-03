@@ -13,25 +13,25 @@
 
 - name: create promtail system group
   group:
-    name: promtail
-    system: true
+    name: "{{ promtail_group }}"
     state: present
+  when: promtail_group != "root"
 
 - name: create promtail system user
   user:
-    name: promtail
-    system: true
+    name: "{{ promtail_user }}"
     shell: "/sbin/nologin"
-    group: promtail
+    group: "{{ promtail_group }}"
     create_home: false
     state: present
+  when: promtail_user != "root"
 
 - name: create promtail directories
   file:
     path: "{{ dir.value.path }}"
     state: directory
-    owner: "{{ dir.owner | default('promtail') }}"
-    group: "{{ dir.group | default('promtail') }}"
+    owner: "{{ dir.owner | default(promtail_user) }}"
+    group: "{{ dir.group | default(promtail_group) }}"
     mode: "{{ dir.value.mode | default(755) }}"
   loop: "{{ promtail_dirs | dict2items }}"
   loop_control:
@@ -75,8 +75,8 @@
   copy:
     content: "{{ promtail_config | to_nice_yaml }}"
     dest: "{{ promtail_dir }}/promtail.yml"
-    owner: promtail
-    group: promtail
+    owner: "{{ promtail_user }}"
+    group: "{{ promtail_group }}"
     mode: 0640
   notify: restart promtail
 
