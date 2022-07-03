@@ -48,6 +48,7 @@ jobs:
       matrix:
         scenario:
           - ubuntu
+          - gentoo
 
     steps:
       - uses: actions/checkout@v3
