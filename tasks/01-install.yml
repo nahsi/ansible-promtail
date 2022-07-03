@@ -51,7 +51,7 @@
   unarchive:
     src: "{{ role_path }}/files/{{ _archive }}"
     dest: "{{ _archive_dir }}"
-    creates: "{{ _archive_dir }}/promtail"
+    creates: "{{ _archive_dir }}/promtail-linux-{{ _arch }}"
 
 - name: propagate promtail binary
   copy:
