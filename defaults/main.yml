@@ -1,0 +1,44 @@
+skip_handlers: false
+
+promtail_download_url: "https://github.com/grafana/loki/releases"
+
+promtail_dir: "/opt/promtail"
+promtail_dirs:
+  main:
+    path: "{{ promtail_dir }}"
+  logs:
+    path: "/var/log/promtail"
+
+promtail_service: |
+  #!/sbin/openrc-run
+  description="Promtail - log collection agent"
+  extra_started_commands="reload"
+  group="${RC_SVCNAME}"
+  user="${RC_SVCNAME}"
+  supervisor="supervise-daemon"
+  pidfile="/run/${RC_SVCNAME}.pid"
+  command="/usr/bin/${RC_SVCNAME}"
+  command_args="-config.file={{ promtail_dir }}/promtail.yml"
+  output_log="{{ promtail_dirs.logs.path }}/promtail.log"
+  error_log="{{ promtail_dirs.logs.path }}/promtail.log"
+  reload() {
+      ebegin "Reloading promtail"
+      ${supervisor} ${RC_SVCNAME} --signal HUP --pidfile "${PIDFILE}"
+      eend $?
+  }
+
+promtail_unitfile: |
+  [Unit]
+  Description="The log collection agent"
+  Documentation=https://grafana.com/docs/loki/latest/
+  After=network.target
+  ConditionFileNotEmpty={{ promtail_dir }}/promtail.yml
+  [Service]
+  User=root
+  Group=root
+  ExecStart=/usr/bin/promtail -config.file {{ promtail_dir }}/promtail.yml
+  Restart=on-failure
+  RestartForceExitStatus=SIGPIPE
+  KillMode=control-group
+  [Install]
+  WantedBy=multi-user.target
