@@ -5,7 +5,8 @@ _arch_map:
   64-bit: amd64
 _arch: "{{ _arch_map[ansible_architecture] }}"
 
+_checksums: "{{ lookup('url', promtail_download_url + '/download/v' + promtail_version + '/SHA256SUMS', wantlist=True) | list }}"
+
 _archive: "promtail-linux-{{ _arch }}.zip"
 _archive_url: "{{ promtail_download_url }}/download/v{{ promtail_version }}/{{ _archive }}"
-_archive_checksum: "{{ promtail_download_url }}/download/v{{ promtail_version }}/SHA256SUMS"
 _archive_dir: "/tmp/{{ _archive | splitext | first }}"
